@@ -98,7 +98,7 @@ namespace Bingo
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
 
-                endpoints.MapHub<ComHub>("/comhub");
+                endpoints.MapHub<BingoHub>("/comhub");
             });
 
             app.UseSpa(spa =>

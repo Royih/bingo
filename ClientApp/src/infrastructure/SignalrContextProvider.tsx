@@ -8,12 +8,12 @@ export type SignalRState = {
   invoke<T>(methodName: string, args: any): Promise<T>;
   connectedSince: Date | null;
   disconnectedSince: Date | null;
+  hubConnection: HubConnection | undefined;
 };
 export enum SignalRStatus {
   Pending = "Pending",
   Connected = "Connected",
   Error = "Error",
-  Ok = "Ok",
   Reconnecting = "Reconnecting",
 }
 const SignalRComHubPath = process.env.REACT_APP_API_PATH + "/comhub";
@@ -48,7 +48,6 @@ export const SignalrContextProvider = (props: any) => {
     const createHubConnection = async () => {
       // Trying to auto-reconnect SignalR trying n-times with increasing intervals
       const reconnectIntervals: number[] = [2000, 5000, 10000, 12000, 15000, 20000, 25000, 30000, 45000];
-      //const reconnectIntervals: number[] = [2000, 5000];
 
       // Build new Hub Connection, url is currently hard coded.
       const hubConnection = new HubConnectionBuilder().withUrl(SignalRComHubPath).withAutomaticReconnect(reconnectIntervals).configureLogging(LogLevel.Information).build();
@@ -85,7 +84,7 @@ export const SignalrContextProvider = (props: any) => {
       }
 
       return () => {
-        console.log("Cleanup Signalr");
+        console.debug("Cleanup Signalr");
         if (hubConnection) {
           hubConnection.off("Heartbeat");
           hubConnection.off("DeviceChanged");
@@ -97,7 +96,6 @@ export const SignalrContextProvider = (props: any) => {
     doStart();
   }, [api, reconnecto]);
 
-
   return (
     <SignalrContext.Provider
       value={{
@@ -106,6 +104,7 @@ export const SignalrContextProvider = (props: any) => {
         invoke: invoke,
         connectedSince: connectedSince,
         disconnectedSince: disconnectedSince,
+        hubConnection: hubConnection,
       }}
     >
       {props.children}

@@ -1,36 +1,18 @@
-import { Button, Paper } from "@material-ui/core";
-import React, { useState } from "react";
-import { Board } from "src/components/board/Board";
+import { Box } from "@material-ui/core";
+import React, { useContext } from "react";
+import { GameLayout } from "src/components/game/GameLayout";
+import { GameContext } from "src/infrastructure/GameContextProvider";
 
 export const Home = () => {
-  const [next, setNext] = useState(false);
-  const [previous, setPrevious] = useState(false);
+  const game = useContext(GameContext);
+  //const [next, setNext] = useState(false);
+  //const [previous, setPrevious] = useState(false);
 
   return (
-    <Paper>
-      <Board next={next} previous={previous}></Board>
-      <Button
-        variant="outlined"
-        color="primary"
-        onClick={() => {
-          setPrevious((curr) => {
-            return !curr;
-          });
-        }}
-      >
-        Prev
-      </Button>
-      <Button
-        variant="outlined"
-        color="primary"
-        onClick={() => {
-          setNext((curr) => {
-            return !curr;
-          });
-        }}
-      >
-        Next
-      </Button>
-    </Paper>
+    <Box mt={3}>
+      <GameLayout></GameLayout>
+
+      <pre>{JSON.stringify(game.connections, null, 5)}</pre>
+    </Box>
   );
 };

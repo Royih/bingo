@@ -46,6 +46,7 @@ import {
   faHeartBroken,
   faUnlink,
 } from "@fortawesome/free-solid-svg-icons";
+import { GameContextProvider } from "./infrastructure/GameContextProvider";
 library.add(
   fas,
   faSatelliteDish,
@@ -82,21 +83,23 @@ function App() {
       <UserContextProvider>
         <SignalrContextProvider>
           <ThemeContextProvider>
-            <CssBaseline />
-            <SnackbarProvider maxSnack={10}>
-              <Layout>
-                <Route exact path="/" component={Home} />
-                <Route exact path="/counter" component={Counter} />
-                <Route exact path="/fetch-data" component={FetchData} />
-                <Route exact path="/throw-exceptions" component={ThrowExceptions} />
-                <Route exact path="/users" component={Users} />
-                <Route path="/user/create" component={EditUserProfile} />
-                <Route path="/users/:id" component={EditUserProfile} />
-                <Route path="/test-signalr" component={TestSignalR} />
-                <Route path="/login" component={Login} />
-              </Layout>
-              <Footer />
-            </SnackbarProvider>
+            <GameContextProvider>
+              <CssBaseline />
+              <SnackbarProvider maxSnack={10}>
+                <Layout>
+                  <Route exact path="/" component={Home} />
+                  <Route exact path="/counter" component={Counter} />
+                  <Route exact path="/fetch-data" component={FetchData} />
+                  <Route exact path="/throw-exceptions" component={ThrowExceptions} />
+                  <Route exact path="/users" component={Users} />
+                  <Route path="/user/create" component={EditUserProfile} />
+                  <Route path="/users/:id" component={EditUserProfile} />
+                  <Route path="/test-signalr" component={TestSignalR} />
+                  <Route path="/login" component={Login} />
+                </Layout>
+                <Footer />
+              </SnackbarProvider>
+            </GameContextProvider>
           </ThemeContextProvider>
         </SignalrContextProvider>
       </UserContextProvider>

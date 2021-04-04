@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import AppBar from "@material-ui/core/AppBar";
 import { createStyles, Theme, makeStyles, useTheme } from "@material-ui/core/styles";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -14,6 +14,7 @@ import { NavLink } from "react-router-dom";
 import { SignalrContext, SignalRStatus } from "src/infrastructure/SignalrContextProvider";
 import { ReconnectSignalr } from "./ReconnectSignalr";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { GameContext } from "src/infrastructure/GameContextProvider";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -44,37 +45,34 @@ const useStyles = makeStyles((theme: Theme) =>
       right: 0,
       margin: "0 auto",
     },
-    sectionDesktop: {
-      display: "none",
-      [theme.breakpoints.up("md")]: {
-        display: "flex",
-      },
-    },
-    sectionMobile: {
-      display: "flex",
-      [theme.breakpoints.up("md")]: {
-        display: "none",
-      },
-    },
   })
 );
+const heartSizes = ["15px", "16px", "17px", "18px", "19px", "20px", "19px", "18px", "17px", "16px", "15px"];
+const heartSizesLength = heartSizes.length;
 
 export const Footer = () => {
   const classes = useStyles();
   const theme = useTheme();
   const themeContext = useContext(ThemeContext);
   const signalr = useContext(SignalrContext);
+  const game = useContext(GameContext);
+
+  const [heartSizeIdx, setHeartSizeIdx] = useState(0);
 
   useEffect(() => {
-    const fetchData = async () => {};
-    fetchData();
+    const timer = setInterval(() => {
+      setHeartSizeIdx((curr) => {
+        return curr + 1 < heartSizesLength ? curr + 1 : 0;
+      });
+    }, 100);
+    return () => clearInterval(timer);
   }, []);
 
   let location = useLocation();
 
   const Displayheart = () => {
-    if (signalr.status === SignalRStatus.Connected || signalr.status === SignalRStatus.Ok) {
-      return <FontAwesomeIcon icon="heartbeat" style={{ color: "#dc004e" }} size="lg" fixedWidth />;
+    if (signalr.status === SignalRStatus.Connected) {
+      return <FontAwesomeIcon icon="heartbeat" style={{ color: "#dc004e", fontSize: heartSizes[heartSizeIdx] }} fixedWidth />;
     }
     return <FontAwesomeIcon icon="heart-broken" size="lg" fixedWidth spin={true} />;
   };
@@ -87,7 +85,8 @@ export const Footer = () => {
           <LeftMenu />
           <Displayheart />
           <Box ml={2}>
-            <Typography>{signalr.status !== SignalRStatus.Ok ? signalr.status.toString() : ""}</Typography>
+            <Typography>{signalr.status !== SignalRStatus.Connected ? signalr.status.toString() : ""}</Typography>
+            {signalr.status === SignalRStatus.Connected && <Typography>{game.state}</Typography>}
           </Box>
 
           <div className={classes.grow} />
